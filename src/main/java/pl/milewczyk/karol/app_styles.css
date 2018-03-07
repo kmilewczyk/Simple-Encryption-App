@@ -1,0 +1,69 @@
+.base_color{
+    -fx-background-color: #32538A;
+    -fx-text-fill: white;
+    -fx-opacity: 0.9;
+}
+
+.lighter_color{
+    -fx-background-color: #516FA2;
+}
+
+.lightest_color{
+    -fx-background-color: #86A0C8;
+}
+
+
+.darker_color{
+    -fx-background-color: #1C3B71;
+}
+
+
+.darkest_color{
+    -fx-background-color: #082350;
+}
+
+
+
+.highlight_color{
+    -fx-background-color: #D09C3E;
+}
+
+.h_lighter_color{
+    -fx-background-color: #F4C46D;
+}
+
+.h_lightest_color{
+    -fx-background-color: #FFDEA2;
+}
+
+.h_darker_color{
+    -fx-background-color: #AA781D;
+}
+
+.h_darkest_color{
+    -fx-background-color: #784E01;
+}
+
+
+.menu > .label {
+    -fx-font-family: "Segoe UI Semibold";
+    -fx-text-fill: white;
+    -fx-opacity: 0.9;
+}
+
+.base_color > .label{
+    -fx-text-fill: white;
+    -fx-opacity: 0.9;
+}
+
+.tab-header-background{
+    -fx-background-color: #1C3B71;
+}
+
+.tab{
+    -fx-background-color: #516FA2;
+}
+
+.tab-label{
+    -fx-font-weight: bold;
+}
