@@ -30,9 +30,9 @@
                         <AnchorPane layoutX="27.0" layoutY="112.0">
                            <children>
                               <Rectangle arcHeight="5.0" arcWidth="5.0" height="126.0" opacity="0.17" stroke="BLACK" strokeType="INSIDE" width="273.0" />
-                              <Label layoutX="19.0" layoutY="20.0" text="Tryb" />
-                              <Label layoutX="19.0" layoutY="90.0" text="Długość podbloku" />
-                              <Label layoutX="19.0" layoutY="56.0" text="Długość klucza" />
+                              <Label layoutX="19.0" layoutY="20.0" style="-fx-text-fill: white;" text="Tryb" />
+                              <Label layoutX="19.0" layoutY="90.0" style="-fx-text-fill: white;" text="Długość podbloku" />
+                              <Label layoutX="19.0" layoutY="56.0" style="-fx-text-fill: white;" text="Długość klucza" />
                               <ComboBox layoutX="188.0" layoutY="15.0" prefHeight="26.0" prefWidth="79.0" />
                               <TextField alignment="CENTER_RIGHT" layoutX="187.0" layoutY="51.0" prefHeight="26.0" prefWidth="81.0" text="128" />
                               <ComboBox layoutX="186.0" layoutY="85.0" prefHeight="26.0" prefWidth="81.0" />
@@ -58,12 +58,12 @@
                         <AnchorPane layoutX="27.0" layoutY="136.0">
                            <children>
                               <Rectangle arcHeight="5.0" arcWidth="5.0" height="129.0" opacity="0.17" stroke="BLACK" strokeType="INSIDE" width="273.0" />
-                              <Label layoutX="19.0" layoutY="90.0" text="Długość podbloku" />
-                              <Label layoutX="19.0" layoutY="56.0" text="Długość klucza" />
+                              <Label layoutX="19.0" layoutY="90.0" style="-fx-text-fill: white;" text="Długość podbloku" />
+                              <Label layoutX="19.0" layoutY="56.0" style="-fx-text-fill: white;" text="Długość klucza" />
                               <TextField editable="false" layoutX="192.0" layoutY="15.0" opacity="0.7" prefHeight="26.0" prefWidth="76.0" />
                               <TextField editable="false" layoutX="192.0" layoutY="51.0" opacity="0.8" prefHeight="26.0" prefWidth="76.0" />
                               <TextField editable="false" layoutX="192.0" layoutY="85.0" opacity="0.85" prefHeight="26.0" prefWidth="76.0" />
-                              <Label layoutX="19.0" layoutY="20.0" text="Tryb" />
+                              <Label layoutX="19.0" layoutY="20.0" style="-fx-text-fill: white;" text="Tryb" />
                            </children>
                         </AnchorPane>
                         <Label layoutX="14.0" layoutY="99.0" text="Hasło" />

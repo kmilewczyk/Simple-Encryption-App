@@ -15,6 +15,7 @@ public class RSAKeysModel extends Observable {
 
     private KeyPairGenerator generator;
     private HashMap<String, SecuredKeyPair> keyring;
+    public final int RSA_KEY_SIZE = 1024;
 
     private final String PRIVATE_KEY_DIRECTORY = "/.rsa/pv";
     private final String PUBLIC_KEY_DIRECTORY = "/.rsa/pu";
@@ -22,7 +23,7 @@ public class RSAKeysModel extends Observable {
    public RSAKeysModel() throws NoSuchAlgorithmException {
        try {
            generator = KeyPairGenerator.getInstance("RSA");
-           generator.initialize(1024);
+           generator.initialize(RSA_KEY_SIZE);
        } catch (NoSuchAlgorithmException e) {
            throw new NoSuchAlgorithmException("RSA wasn't provided to environment", e);
        }

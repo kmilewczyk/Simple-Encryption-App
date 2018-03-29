@@ -9,7 +9,6 @@ import pl.milewczyk.karol.crypto.RSAKeysModel;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 @NoArgsConstructor
@@ -18,6 +17,7 @@ public class GUI {
     private Pane loginPane;
     private Pane newUserPane;
     private Pane encryptionPane;
+    private Pane newPublicKeyPane;
     private Stage primaryStage;
     private AppPanes prvPane = AppPanes.LOGIN;
     private AppPanes currentPane = AppPanes.LOGIN;
@@ -25,7 +25,7 @@ public class GUI {
     public static final int WINDOW_WIDTH = 600;
     public static final int WINDOW_HEIGHT = 500;
 
-    enum AppPanes {LOGIN, NEW_USER, ENCRYPTION};
+    enum AppPanes {LOGIN, NEW_USER, ENCRYPTION, NEW_PUBLIC_KEY};
 
 
 
@@ -55,6 +55,9 @@ public class GUI {
             case ENCRYPTION:
                 baseApp.getChildren().add(encryptionPane);
                 break;
+            case NEW_PUBLIC_KEY:
+                baseApp.getChildren().add(newPublicKeyPane);
+                break;
         }
 
         currentPane = pane;
@@ -66,32 +69,34 @@ public class GUI {
 
 
     public void loadLoginPane() throws IOException {
-        URL url = new File("src/main/java/pl/milewczyk/karol/login_pane.fxml").toURI().toURL();
-        FXMLLoader loader = new FXMLLoader(url);
+        FXMLLoader loader = new FXMLLoader(Bsk1App.class.getClass().getResource("/login_pane.fxml"));
         loader.setControllerFactory(c -> new LoginController(this));
         loginPane = loader.load();
     }
 
 
     public void loadBaseApp() throws IOException {
-        URL url = new File("src/main/java/pl/milewczyk/karol/base_app.fxml").toURI().toURL();
-        FXMLLoader loader = new FXMLLoader(url);
+        FXMLLoader loader = new FXMLLoader(Bsk1App.class.getClass().getResource("/base_app.fxml"));
         loader.setControllerFactory(c -> new BaseAppController(this));
         baseApp = loader.load();
     }
 
 
     public void loadNewUserPane(RSAKeysModel model) throws IOException {
-        URL url = new File("src/main/java/pl/milewczyk/karol/new_user_pane.fxml").toURI().toURL();
-        FXMLLoader loader = new FXMLLoader(url);
+        FXMLLoader loader = new FXMLLoader(Bsk1App.class.getClass().getResource("/new_user_pane.fxml"));
         loader.setControllerFactory(c -> new NewUserController(this, model));
         newUserPane = loader.load();
     }
 
 
     public void loadEncryptionPane() throws IOException {
-        URL url = new File("src/main/java/pl/milewczyk/karol/encryption_pane.fxml").toURI().toURL();
-        FXMLLoader loader = new FXMLLoader(url);
+        FXMLLoader loader = new FXMLLoader(Bsk1App.class.getClass().getResource("/encryption_pane.fxml"));
         encryptionPane = loader.load();
+    }
+
+    public void loadNewPublicKeyPane(RSAKeysModel model) throws IOException {
+        FXMLLoader loader = new FXMLLoader(Bsk1App.class.getClass().getResource("/new_public_key.fxml"));
+        loader.setControllerFactory(c -> new NewPublicKeyController(this, model));
+        newPublicKeyPane = loader.load();
     }
 }

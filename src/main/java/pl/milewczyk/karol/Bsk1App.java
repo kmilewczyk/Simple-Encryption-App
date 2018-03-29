@@ -28,8 +28,9 @@ public class Bsk1App extends Application {
     private void loadPanes() throws Exception{
         gui.loadBaseApp();
         gui.loadLoginPane();
-        gui.loadNewUserPane(rsaKeyModel);
         gui.loadEncryptionPane();
+        gui.loadNewPublicKeyPane(rsaKeyModel);
+        gui.loadNewUserPane(rsaKeyModel);
 
     }
 }

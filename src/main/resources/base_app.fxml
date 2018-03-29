@@ -19,7 +19,7 @@
           <Menu mnemonicParsing="false" text="Zarządzanie kluczami">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#goToNewUserPane" text="Utwórz nową parę kluczy" />
-                  <MenuItem mnemonicParsing="false" text="Dodaj nowy klucz publiczny" />
+                  <MenuItem mnemonicParsing="false" onAction="#goToNewPublicKeyPane" text="Dodaj nowy klucz publiczny" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Pomoc">

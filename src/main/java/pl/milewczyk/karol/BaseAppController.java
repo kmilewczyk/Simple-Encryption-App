@@ -17,4 +17,8 @@ public class BaseAppController {
         // TODO wylogowywanie
         gui.changePane(GUI.AppPanes.LOGIN);
     }
+
+    public void goToNewPublicKeyPane(ActionEvent actionEvent) {
+        gui.changePane(GUI.AppPanes.NEW_PUBLIC_KEY);
+    }
 }
