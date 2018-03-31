@@ -1,12 +1,12 @@
 package pl.milewczyk.karol;
 
-import com.sun.istack.internal.NotNull;
 import javafx.event.ActionEvent;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 
 @AllArgsConstructor
 public class BaseAppController {
-    @NotNull
+    @NonNull
     private GUI gui;
 
     public void goToNewUserPane(ActionEvent actionEvent) {

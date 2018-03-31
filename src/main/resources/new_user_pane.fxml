@@ -7,20 +7,25 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="base_color" stylesheets="@app_styles.css" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.milewczyk.karol.NewUserController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="base_color" stylesheets="@app_styles.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.milewczyk.karol.NewUserController">
    <children>
-      <PasswordField layoutX="215.0" layoutY="157.0" promptText="Hasło" />
-      <PasswordField layoutX="215.0" layoutY="200.0" promptText="Powtórz hasło" />
-      <Button layoutX="221.0" layoutY="244.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="158.0" styleClass="lightest_color" text="Generuj klucze!" onMouseClicked="#generateKeyPair">
+      <PasswordField fx:id="passwordField" layoutX="215.0" layoutY="157.0" promptText="Hasło" />
+      <PasswordField fx:id="repeatedPasswordField" layoutX="215.0" layoutY="200.0" promptText="Powtórz hasło" />
+      <Button layoutX="211.0" layoutY="246.0" mnemonicParsing="false" onMouseClicked="#generateKeyPair" prefHeight="26.0" prefWidth="158.0" styleClass="lightest_color" text="Generuj klucze!">
          <font>
             <Font size="16.0" />
          </font>
       </Button>
-      <TextField layoutX="215.0" layoutY="117.0" promptText="Nazwa użytkownika" />
-      <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" styleClass="lightest_color" text="&lt;" onAction="#goBack"/>
+      <TextField fx:id="userEmailField" layoutX="215.0" layoutY="117.0" promptText="Pozwiązany email" />
+      <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#goBack" styleClass="lightest_color" text="&lt;" />
       <Label layoutX="163.0" layoutY="27.0" prefHeight="79.0" prefWidth="275.0" text="Utworzenie nowego użytkownika" textAlignment="CENTER" wrapText="true">
          <font>
             <Font name="Droid Serif" size="27.0" />
+         </font>
+      </Label>
+      <Label fx:id="errorContentLabel" layoutX="270.0" layoutY="313.0" style="-fx-text-fill: red;" textFill="RED">
+         <font>
+            <Font size="17.0" />
          </font>
       </Label>
    </children>

@@ -1,9 +1,15 @@
 package pl.milewczyk.karol;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import lombok.NoArgsConstructor;
 import pl.milewczyk.karol.crypto.RSAKeysModel;
 
@@ -69,34 +75,53 @@ public class GUI {
 
 
     public void loadLoginPane() throws IOException {
-        FXMLLoader loader = new FXMLLoader(Bsk1App.class.getClass().getResource("/login_pane.fxml"));
+        FXMLLoader loader = new FXMLLoader(Bsk1App.class.getResource("/login_pane.fxml"));
         loader.setControllerFactory(c -> new LoginController(this));
         loginPane = loader.load();
     }
 
 
     public void loadBaseApp() throws IOException {
-        FXMLLoader loader = new FXMLLoader(Bsk1App.class.getClass().getResource("/base_app.fxml"));
+        FXMLLoader loader = new FXMLLoader(Bsk1App.class.getResource("/base_app.fxml"));
         loader.setControllerFactory(c -> new BaseAppController(this));
         baseApp = loader.load();
     }
 
 
     public void loadNewUserPane(RSAKeysModel model) throws IOException {
-        FXMLLoader loader = new FXMLLoader(Bsk1App.class.getClass().getResource("/new_user_pane.fxml"));
+        FXMLLoader loader = new FXMLLoader(Bsk1App.class.getResource("/new_user_pane.fxml"));
         loader.setControllerFactory(c -> new NewUserController(this, model));
         newUserPane = loader.load();
     }
 
 
     public void loadEncryptionPane() throws IOException {
-        FXMLLoader loader = new FXMLLoader(Bsk1App.class.getClass().getResource("/encryption_pane.fxml"));
+        FXMLLoader loader = new FXMLLoader(Bsk1App.class.getResource("/encryption_pane.fxml"));
         encryptionPane = loader.load();
     }
 
     public void loadNewPublicKeyPane(RSAKeysModel model) throws IOException {
-        FXMLLoader loader = new FXMLLoader(Bsk1App.class.getClass().getResource("/new_public_key.fxml"));
+        FXMLLoader loader = new FXMLLoader(Bsk1App.class.getResource("/new_public_key.fxml"));
         loader.setControllerFactory(c -> new NewPublicKeyController(this, model));
         newPublicKeyPane = loader.load();
     }
+
+
+    public void showDebugDialog(String text){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("DEBUG");
+        alert.setHeaderText(null);
+        alert.setContentText(text);
+
+        alert.showAndWait();
+    }
+
+    public void showErrorDialog(String text){
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(text);
+        alert.showAndWait();
+    }
+
 }

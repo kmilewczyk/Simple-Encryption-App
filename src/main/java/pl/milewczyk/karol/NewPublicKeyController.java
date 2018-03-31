@@ -1,20 +1,22 @@
 package pl.milewczyk.karol;
 
 
-import com.sun.istack.internal.NotNull;
 import javafx.event.ActionEvent;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import pl.milewczyk.karol.crypto.RSAKeysModel;
 
 @AllArgsConstructor
 public class NewPublicKeyController {
-    @NotNull
+    @NonNull
     private GUI gui;
-    @NotNull
+    @NonNull
     private RSAKeysModel RSAKeysModel;
 
     public void goBack(ActionEvent actionEvent) {
         gui.goToPrvPane();
     }
 
+    public void addKey(ActionEvent actionEvent) {
+    }
 }

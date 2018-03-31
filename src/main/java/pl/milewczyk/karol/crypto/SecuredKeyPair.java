@@ -1,14 +1,15 @@
 package pl.milewczyk.karol.crypto;
 
-import com.sun.istack.internal.NotNull;
+import lombok.NonNull;
 import lombok.AllArgsConstructor;
 
+import java.security.Key;
 import java.security.PublicKey;
 
 @AllArgsConstructor
 public class SecuredKeyPair {
-    @NotNull
+    @NonNull
     public PublicKey publicKey;
-    @NotNull
-    public String securedPrivateKey;
+    @NonNull
+    public byte[] securedPrivateKey;
 }

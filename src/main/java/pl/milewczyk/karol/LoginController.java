@@ -1,12 +1,12 @@
 package pl.milewczyk.karol;
 
-import com.sun.istack.internal.NotNull;
 import javafx.scene.input.MouseEvent;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 
 @AllArgsConstructor
 public class LoginController {
-    @NotNull
+    @NonNull
     public GUI gui;
 
     public void loginEvent(MouseEvent mouseEvent) {
