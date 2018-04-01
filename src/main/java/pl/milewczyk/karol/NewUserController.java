@@ -35,25 +35,18 @@ public class NewUserController {
     @FXML
     public Label errorContentLabel;
 
-    private final static String CORRECT_USER_NAME_REGEX = "[\\S&&[^\\,]]*";
-    private final static String CORRECT_PASSWORD_REGEX = ".*";
+
 
     public void generateKeyPair(MouseEvent mouseEvent) {
-        if (!passwordField.getText().equals(repeatedPasswordField.getText())){
-            gui.showErrorDialog("Hasła nie są identyczne");
-            return;
-        } else if (passwordField.getText().equals("")){
-            gui.showErrorDialog("Pole hasła jest puste");
-            return;
-        } else if (!Pattern.matches(CORRECT_PASSWORD_REGEX, passwordField.getText())){
-            gui.showErrorDialog("Hasło zawiera zabronione znaki");
-            return;
-        } else if (userEmailField.getText().equals("")){
-            gui.showErrorDialog("Pole nazwy użytkownika jest puste");
+        ValidityAnswer answer;
+        answer = ValidityChecker.validUsername(userEmailField.getText());
+        if (!answer.isValid){
+            gui.showErrorDialog(answer.reason);
             return;
         }
-        else if (!Pattern.matches(CORRECT_USER_NAME_REGEX, userEmailField.getCharacters())){
-            gui.showErrorDialog("Pole nazwy użytkownika nie może zawierać białych znaków i przecinka");
+        answer = ValidityChecker.validPassword(passwordField.getText(), repeatedPasswordField.getText());
+        if (!answer.isValid){
+            gui.showErrorDialog(answer.reason);
             return;
         }
 

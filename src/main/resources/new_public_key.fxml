@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="base_color" stylesheets="@app_styles.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.milewczyk.karol.NewPublicKeyController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="base_color" stylesheets="@app_styles.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.milewczyk.karol.NewPublicKeyController" fx:id="basePane">
    <children>
       <Button layoutX="204.0" layoutY="249.0" mnemonicParsing="false" onAction="#addKey" prefHeight="26.0" prefWidth="158.0" styleClass="lightest_color" text="Dodaj klucz!">
          <font>
@@ -14,14 +14,14 @@
          </font>
       </Button>
       <AnchorPane layoutX="192.0" layoutY="174.0" />
-      <Button layoutX="248.0" layoutY="188.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="69.0" text="Wybierz klucz" />
+      <Button layoutX="248.0" layoutY="188.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="69.0" text="Wybierz klucz" onAction="#chooseKey"/>
       <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#goBack" styleClass="lightest_color" text="&lt;" />
       <Label layoutX="145.0" layoutY="56.0" prefHeight="79.0" prefWidth="275.0" text="Dodanie nowego klucza publicznego" textAlignment="CENTER" wrapText="true">
          <font>
             <Font name="Droid Serif" size="27.0" />
          </font>
       </Label>
-      <TextField layoutX="209.0" layoutY="149.0" promptText="Email uzytkownika" />
-      <Label layoutX="182.0" layoutY="221.0" prefHeight="17.0" prefWidth="203.0" text="filepath" />
+      <TextField layoutX="209.0" layoutY="149.0" promptText="Email uzytkownika" fx:id="usernameField"/>
+      <Label layoutX="182.0" layoutY="221.0" prefHeight="17.0" prefWidth="203.0" text="filepath" fx:id="filePath"/>
    </children>
 </AnchorPane>

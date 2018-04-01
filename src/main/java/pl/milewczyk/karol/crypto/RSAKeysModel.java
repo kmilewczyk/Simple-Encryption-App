@@ -3,7 +3,9 @@ package pl.milewczyk.karol.crypto;
 
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
+import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
@@ -34,31 +36,42 @@ public class RSAKeysModel extends Observable {
      * userName -> keypair
      */
     private HashMap<String, SecuredKeyPair> keyring = new HashMap<>();
+
+    @Getter
     @Setter
-    private String userPassword;
+    private String currentUserPassword;
+
+    @Setter
+    @Getter
+    private String currentUsername;
 
     private final static String KEY_FOLDER_NAME = ".rsa";
     private final static Path PRIVATE_KEY_DIR_PATH = Paths.get(KEY_FOLDER_NAME, "pv");
     private final static Path PUBLIC_KEY_DIR_PATH = Paths.get(KEY_FOLDER_NAME, "pu");
     private final static Path KEY_LINK_FILE_PATH = Paths.get(KEY_FOLDER_NAME, "lookup");
 
-    private enum LookupAttribute{
+    public static final String BEGIN_PUBLIC_KEY = "-----BEGIN PUBLIC KEY-----";
+    public static final String END_PUBLIC_KEY = "-----END PUBLIC KEY-----";
+    public static final String BEGIN_ENCRYPTED_PRIVATE_KEY = "-----BEGIN ENCRYPTED PRIVATE KEY-----";
+    public static final String END_ENCRYPTED_PRIVATE_KEY = "-----END ENCRYPTED PRIVATE KEY-----";
+
+    public enum StoredKeyType {
         PUBLIC("public"),
         PAIR("pair");
         private final String val;
-        private static final Map<String, LookupAttribute> lookup = new HashMap<>();
+        private static final Map<String, StoredKeyType> lookup = new HashMap<>();
         static {
-            for (LookupAttribute attr : LookupAttribute.values()){
+            for (StoredKeyType attr : StoredKeyType.values()){
                 lookup.put(attr.get(), attr);
             }
         }
-        LookupAttribute(final String val) {
+        StoredKeyType(final String val) {
             this.val = val;
         }
         public final String get(){
             return val;
         }
-        public static LookupAttribute get(String key){
+        public static StoredKeyType get(String key){
             return lookup.get(key);
         }
     }
@@ -79,7 +92,6 @@ public class RSAKeysModel extends Observable {
        readKeyringData();
    }
 
-
    private void createDirectories() throws IOException {
        try {
            Files.createDirectory(Paths.get(KEY_FOLDER_NAME));
@@ -99,27 +111,30 @@ public class RSAKeysModel extends Observable {
        } catch(FileAlreadyExistsException e){}
    }
    private void readKeyringData() throws IOException, InvalidKeySpecException {
-        Base64.Decoder decoder = Base64.getDecoder();
         CSVReader csvreader = new CSVReader(new FileReader(KEY_LINK_FILE_PATH.toString()));
 
        for (Iterator<String[]> it = csvreader.iterator(); it.hasNext(); ) {
            String[] line = it.next();
-           switch (LookupAttribute.get(line[2])){
+           switch (StoredKeyType.get(line[2])){
                case PUBLIC:
                    break;
                case PAIR:
                    byte[] publicKey = readKeyFile(new File(new File(PUBLIC_KEY_DIR_PATH.toString()), line[0] + ".pub"),
-                          "-----BEGIN PUBLIC KEY-----", "-----END PUBLIC KEY-----");
+                           BEGIN_PUBLIC_KEY, END_PUBLIC_KEY);
 
                    byte[] privateKey = readKeyFile(new File(new File(PRIVATE_KEY_DIR_PATH.toString()), line[0]),
-                           "-----BEGIN ENCRYPTED PRIVATE KEY-----", "-----END ENCRYPTED PRIVATE KEY-----");
+                           BEGIN_ENCRYPTED_PRIVATE_KEY, END_ENCRYPTED_PRIVATE_KEY);
 
-                   keyring.put(line[1], new SecuredKeyPair(
-                           keyFactory.generatePublic(new X509EncodedKeySpec(publicKey)),
-                           privateKey));
-                           break;
+
+                   keyring.put(line[1],
+                           new SecuredKeyPair(getPublicKey(publicKey), privateKey));
+                   break;
            }
        }
+   }
+
+   private PublicKey getPublicKey(byte[] publicKey) throws InvalidKeySpecException {
+        return keyFactory.generatePublic(new X509EncodedKeySpec(publicKey));
    }
 
 
@@ -141,35 +156,53 @@ public class RSAKeysModel extends Observable {
        return Base64.getDecoder().decode(keyBuffer.toString());
    }
 
+   public StoredKeyType getKeyType(String username){
+        if (!this.userExists(username))
+            throw new IllegalArgumentException("User is not in dictionary!");
+
+        if (keyring.get(username).securedPrivateKey == null)
+            return StoredKeyType.PUBLIC;
+        else return StoredKeyType.PAIR;
+   }
+
 
    public boolean userExists(String username){
         return keyring.get(username) != null;
    }
 
 
-   public void addNewPublicKey(String userName, Path keyFilePath){
-       // check validity
-       // check if one doesn't already exists
-       // write to file
-       // bind to lookup
+   public void addNewPublicKey(String userName, File file) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+       if (this.userExists(userName)) {
+           throw new IllegalArgumentException("User is already registered");
+       }
+
+       byte[] publicKey = readKeyFile(file, BEGIN_PUBLIC_KEY, END_PUBLIC_KEY);
+       String filename = getFilenameFromUsername(userName);
+       writePublicKeyFile(filename, publicKey);
+       bindNewPublicKey(getPublicKey(publicKey), filename, userName);
    }
 
 
    private void bindNewKeyPair(String keysFileName, String userName, SecuredKeyPair keypair) throws IOException {
        CSVWriter csvwriter = new CSVWriter(new FileWriter(KEY_LINK_FILE_PATH.toString(), true));
-       csvwriter.writeNext(new String[]{keysFileName, userName, LookupAttribute.PAIR.get()});
+       csvwriter.writeNext(new String[]{keysFileName, userName, StoredKeyType.PAIR.get()});
        csvwriter.close();
 
        keyring.put(userName, keypair);
    }
 
 
-   private void bindNewPublicKey(String keyFileName, String userName){
+   private void bindNewPublicKey(PublicKey publicKey, String keyFileName, String userName) throws IOException {
+       CSVWriter csvwriter = new CSVWriter(new FileWriter(KEY_LINK_FILE_PATH.toString(), true));
+       csvwriter.writeNext(new String[]{keyFileName, userName, StoredKeyType.PAIR.get()});
+       csvwriter.close();
+
+       keyring.put(userName, new SecuredKeyPair(publicKey, null));
    }
 
    private void writePrivateKeyFile(String filename, byte[] securedPrivateKey) throws IOException {
         FileWriter writer = new FileWriter(new File(new File(PRIVATE_KEY_DIR_PATH.toString()), filename));
-        writer.write("-----BEGIN ENCRYPTED PRIVATE KEY-----" + System.lineSeparator());
+        writer.write(BEGIN_ENCRYPTED_PRIVATE_KEY + System.lineSeparator());
         String encodedKey = Base64.getEncoder().encodeToString(securedPrivateKey);
         int i;
         for (i = 0; i+64 < encodedKey.length(); i += 64) {
@@ -178,13 +211,13 @@ public class RSAKeysModel extends Observable {
         }
         writer.write(encodedKey, i, encodedKey.length()-i);
         writer.write(System.lineSeparator());
-        writer.write("-----END ENCRYPTED PRIVATE KEY-----" + System.lineSeparator());
+        writer.write(END_ENCRYPTED_PRIVATE_KEY + System.lineSeparator());
         writer.close();
    }
 
    private void writePublicKeyFile(String filename, byte[] publicKey) throws IOException {
         FileWriter writer = new FileWriter(new File(new File(PUBLIC_KEY_DIR_PATH.toString()), filename + ".pub"));
-        writer.write("-----BEGIN PUBLIC KEY-----" + System.lineSeparator());
+       writer.write(BEGIN_PUBLIC_KEY + System.lineSeparator());
         String encodedKey = Base64.getEncoder().encodeToString(publicKey);
         int i;
         for (i = 0; i+64 < encodedKey.length(); i += 64) {
@@ -193,7 +226,7 @@ public class RSAKeysModel extends Observable {
         }
         writer.write(encodedKey, i, encodedKey.length()-i);
         writer.write(System.lineSeparator());
-        writer.write("-----END PUBLIC KEY-----" + System.lineSeparator());
+        writer.write(END_PUBLIC_KEY + System.lineSeparator());
         writer.close();
    }
 
@@ -207,18 +240,24 @@ public class RSAKeysModel extends Observable {
    public void generateNewSecuredKeyPair(String userPassword, String userName) throws IOException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException {
        KeyPair keyPair = generator.generateKeyPair();
        Base64.Encoder encoder = Base64.getEncoder();
-       MessageDigest md = MessageDigest.getInstance("SHA-256");
        initCipherWithPassword(Cipher.ENCRYPT_MODE, userPassword);
 
        byte[] secureSecret = passwordCipher.doFinal(keyPair.getPrivate().getEncoded());
-       String filename = encoder.encodeToString(md.digest(userName.getBytes())).replace('/', '-');
+
+       String filename = getFilenameFromUsername(userName);
 
        writePrivateKeyFile(filename, secureSecret);
        writePublicKeyFile(filename, keyPair.getPublic().getEncoded());
        bindNewKeyPair(filename, userName, new SecuredKeyPair(keyPair.getPublic(), secureSecret));
    }
 
-   public byte[] encrypt(String userName, byte[] data) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+    @NotNull
+    private String getFilenameFromUsername(String userName) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        return Base64.getEncoder().encodeToString(md.digest(userName.getBytes())).replace('/', '-');
+    }
+
+    public byte[] encrypt(String userName, byte[] data) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
         if (!this.userExists(userName)){
             throw new IllegalArgumentException("User is not registered");
         }
@@ -229,13 +268,17 @@ public class RSAKeysModel extends Observable {
 
 
    public byte[] decrypt(String userName, byte[] data) throws InvalidKeySpecException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException {
-       if (userPassword == null)
-            throw new IllegalStateException("No userPassword provided");
+       if (currentUserPassword == null)
+            throw new IllegalStateException("No currentUserPassword provided");
        if (!this.userExists(userName))
            throw new IllegalArgumentException("User is not registered");
 
        SecuredKeyPair pair = keyring.get(userName);
-       initCipherWithPassword(Cipher.DECRYPT_MODE, userPassword);
+       if (pair.securedPrivateKey == null){
+           throw new IllegalArgumentException("There is not private key bound to user");
+       }
+
+       initCipherWithPassword(Cipher.DECRYPT_MODE, currentUserPassword);
        byte[] plainSecretKey = passwordCipher.doFinal(pair.securedPrivateKey);
 
        rsaCipher.init(Cipher.DECRYPT_MODE,
@@ -243,25 +286,8 @@ public class RSAKeysModel extends Observable {
 
        return rsaCipher.doFinal(data);
    }
-}
 
-//
-//    KeyPair keyPair = generator.generateKeyPair();
-//    Base64.Encoder encoder = Base64.getEncoder();
-//    Base64.Decoder decoder = Base64.getDecoder();
-//    byte[] secret = keyPair.getPrivate().getEncoded();
-//
-//      try {
-//              System.out.println(encoder.encodeToString(secret));
-//              byte[] encoded = cipher.doFinal(secret);
-//              String encryptedString = encoder.encodeToString(encoded);
-//              cipher.init(Cipher.DECRYPT_MODE, key);
-//              encoded = decoder.decode(encryptedString);
-//              System.out.println(encoder.encodeToString(cipher.doFinal(encoded)));
-//              } catch (IllegalBlockSizeException e) {
-//              e.printStackTrace();
-//              } catch (BadPaddingException e) {
-//              e.printStackTrace();
-//              } catch (InvalidKeyException e) {
-//              e.printStackTrace();
-//              }
+   public String[] getUserNames(){
+        return keyring.keySet().toArray(new String[keyring.size()]);
+   }
+}

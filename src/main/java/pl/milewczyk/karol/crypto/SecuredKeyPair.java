@@ -10,6 +10,5 @@ import java.security.PublicKey;
 public class SecuredKeyPair {
     @NonNull
     public PublicKey publicKey;
-    @NonNull
     public byte[] securedPrivateKey;
 }

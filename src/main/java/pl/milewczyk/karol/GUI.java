@@ -95,8 +95,9 @@ public class GUI {
     }
 
 
-    public void loadEncryptionPane() throws IOException {
+    public void loadEncryptionPane(RSAKeysModel model) throws IOException {
         FXMLLoader loader = new FXMLLoader(Bsk1App.class.getResource("/encryption_pane.fxml"));
+        loader.setControllerFactory(c -> new EncryptionController(this, model));
         encryptionPane = loader.load();
     }
 
